@@ -31,7 +31,30 @@ function saveRecord(record) {
 }
 
 function checkDatabase() {
-    // code here
+    // create transaction and access pending object store
+    const transaction = db.transaction(["pending"], "readwrite");
+    const budgetStore = transaction.objectStore("pending");
+    // get all records from store
+    const getAll = budgetStore.getAll();
+    getAll.onsuccess = function () {
+        if (getAll.result.length > 0) {
+          fetch('/api/transaction/bulk', {
+            method: 'POST',
+            body: JSON.stringify(getAll.result),
+            headers: {
+              Accept: 'application/json, text/plain, */*',
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((response) => response.json())
+            .then(() => {
+              const transaction = db.transaction(["pending"], "readwrite");
+              const budgetStore = transaction.objectStore("pending");
+              // clear all items in object store
+              budgetStore.clear();
+            });
+        }
+      };
 }
 
 // listen for app coming back online
