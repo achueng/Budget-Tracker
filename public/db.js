@@ -21,13 +21,8 @@ request.onerror = function (event) {
     console.log(event.target.errorCode);
 };
 
-function saveRecord(record) {
-    // create transaction on pending db
-    const transaction = db.transaction(["pending"], "readwrite");
-    // access your pending object store
-    const budgetStore = transaction.objectStore("pending");
-    // add record
-    budgetStore.add(record); 
+function saveRecord() {
+    // code here
 }
 
 function checkDatabase() {
